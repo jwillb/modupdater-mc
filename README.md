@@ -1,6 +1,6 @@
 # modupdater-mc
 
-A web-crawler based mod updater for updating Minecraft mods from curseforge to their latest versions.
+A tool for updating Minecraft mods from curseforge to their latest versions, using [Selenium](https://selenium.dev) and [CurseProxy](https://github.com/NikkyAI/CurseProxy).
 
 ## Prerequisites
 - Minecraft installed with mods (Obviously)
