@@ -1,2 +1,3 @@
-Put your Minecraft version below this line.
+▼▼▼ Put your Minecraft version below this line. ▼▼▼
 1.12.2
+▼▼▼ If using Windows, put the Geckodriver path below this line. ▼▼▼
