@@ -8,6 +8,6 @@ A tool for updating Minecraft mods from curseforge to their latest versions, usi
   - [Python 3.8](https://python.org) installed  
   - to install selenium via pip/pip3 with the command ```pip3 install selenium``` on Linux and ```pip install selenium``` on Windows
   - to install wget via pip/pip3 with the command ```pip3 install wget``` on Linux and ```pip install wget``` on Windows
-  - You will also need to install the Gecko webdriver by Mozilla. That process is explained in [this StackOverflow question/answer](https://stackoverflow.com/questions/41190989/how-do-i-install-geckodriver).
+  - You will also need to install the Gecko webdriver by Mozilla. That process is explained in [this StackOverflow question/answer](https://stackoverflow.com/questions/41190989/how-do-i-install-geckodriver). After this is done, you will need to specify the path to the webdriver in the options.txt file if you are on Windows. If you are on Linux, all you will need to do is run ```sudo apt install firefox-geckodriver```
   
 This does not currently and will not ever work with mods from sites that aren't [Curseforge](https://www.curseforge.com/minecraft/mc-mods/).  
