@@ -35,10 +35,13 @@ for character in options_txt[1]:
     if character != "\n":
         version = version + character
 
-browser = webdriver.Firefox(executable_path=geckopath)
-options = Options()
+# Create the webdriver
+if geckopath != "":
+    browser = webdriver.Firefox(executable_path=geckopath)
+else:
+    browser =  webdriver.Firefox()
 
-base_api_url = "https://curse.nikky.moe/api/addon/"
+options = Options()
 
 print("Current working directory: {}".format(current_dir))
 print("Using minecraft version {}".format(version))
@@ -51,15 +54,19 @@ def get_project_id(mod_name):
         mod_link = browser.find_element_by_partial_link_text("Mods - Minecraft - CurseForge") 
         mod_link.click()
     except NoSuchElementException:    
-            print("Element was not found. This could mean that there was an internal error, but \nit usually means that the mod is not on Curseforge.")
-            browser.quit()
-            exit()
-    files = browser.find_element_by_partial_link_text("Files")
-    files.click
+        print("Element was not found. This could mean that there was an internal error, but \nit usually means that the mod is not on Curseforge.")
+        browser.quit()
+        exit()
     project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
 
     browser.quit()
     return project_id
 
-mod_id = get_project_id("ProjectE-1.12.2-PE1.4.1.jar")
+mod_id = get_project_id("fossilsarcheology-8.0.3.jar")
 print(mod_id)
+
+base_api_url = "https://curse.nikky.moe/api/addon/" + mod_id
+
+response = rq.get(base_api_url + "/files/")
+json_response = response.json()
+print(json_response[0]["gameVersion"])
