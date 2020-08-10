@@ -1,21 +1,23 @@
 # Import necessary modules
-import os
+from os import path
 from time import sleep
-import wget
-import requests as rq
-import json
+from wget import download
+from requests import get
+from glob import glob
+from re import sub
 
 # Import Selenium
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+
+
 
 # Get current dir so script can be run from anywhere
-current_dir = os.path.dirname(os.path.realpath(__file__))
+current_dir = path.dirname(path.realpath(__file__))
 
 # Create and populate the options_txt variable with the options.txt file
 options_txt = []
@@ -30,21 +32,28 @@ for character in options_txt[3]:
         geckopath = geckopath + character
 
 # Create version variable and remove newline chars from options.txt
-version = ""
+game_version = ""
 for character in options_txt[1]:
     if character != "\n":
-        version = version + character
+        game_version = game_version + character
+
+# Create and specify options for webdriver
+options = Options()
+options.headless = True
 
 # Create the webdriver
 if geckopath != "":
-    browser = webdriver.Firefox(executable_path=geckopath)
+    browser = webdriver.Firefox(options=options, executable_path=geckopath)
 else:
-    browser =  webdriver.Firefox()
-
-options = Options()
+    browser =  webdriver.Firefox(options=options)
 
 print("Current working directory: {}".format(current_dir))
-print("Using minecraft version {}".format(version))
+print("Using minecraft version {}".format(game_version))
+
+raw_mod_list = glob(current_dir + "/*.jar")
+mod_list = []
+for item in raw_mod_list:
+    mod_list.append(sub(current_dir + "/", "", item))
 
 # Get mod project ID number for the Curseproxy API
 def get_project_id(mod_name):
@@ -53,20 +62,32 @@ def get_project_id(mod_name):
     try:
         mod_link = browser.find_element_by_partial_link_text("Mods - Minecraft - CurseForge") 
         mod_link.click()
+        project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
     except NoSuchElementException:    
         print("Element was not found. This could mean that there was an internal error, but \nit usually means that the mod is not on Curseforge.")
         browser.quit()
-        exit()
-    project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
-
-    browser.quit()
+        pass
     return project_id
 
-mod_id = get_project_id("fossilsarcheology-8.0.3.jar")
-print(mod_id)
+base_api_url = "https://curse.nikky.moe/api/addon/"
 
-base_api_url = "https://curse.nikky.moe/api/addon/" + mod_id
+list_number = -1
 
-response = rq.get(base_api_url + "/files/")
-json_response = response.json()
-print(json_response[0]["gameVersion"])
+for item in mod_list:
+    list_number += 1
+    print("Working on file: {}".format(item))
+    mod_id = get_project_id(item)
+    print(mod_id)
+    query = base_api_url + mod_id
+    api_response = get(query, timeout=3).json()
+    files_response = get(query + "/files").json()
+    print("Mod name: {}".format(api_response["name"]))
+
+    for entry in files_response:
+        api_mod_version = entry["gameVersion"]
+        print(api_mod_version)
+        print(entry["fileName"])
+
+        
+
+browser.quit()
