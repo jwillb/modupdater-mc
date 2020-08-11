@@ -1,3 +1,6 @@
 ▼▼▼ Put your Minecraft version below this line. ▼▼▼
 1.12.2
 ▼▼▼ If using Windows or you installed a standalone binary for the driver on Linux, put the Geckodriver path below this line. ▼▼▼
+/home/jonathanbonham/modupdater-mc/geckodriver
+▼▼▼ Put the path to your mods below this line ▼▼▼
+/home/jonathanbonham/Temp/

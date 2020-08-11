@@ -1,5 +1,5 @@
 # Import necessary modules
-from os import path
+from os import path, chdir, remove
 from time import sleep
 from wget import download
 from requests import get
@@ -14,14 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
-
-
-# Get current dir so script can be run from anywhere
-current_dir = path.dirname(path.realpath(__file__))
+script_dir = path.dirname(path.realpath(__file__))
 
 # Create and populate the options_txt variable with the options.txt file
 options_txt = []
-with open(current_dir + "/options.txt") as source:
+with open(script_dir + "/options.txt") as source:
     for line in source:
         options_txt.append(line)
 
@@ -37,6 +34,13 @@ for character in options_txt[1]:
     if character != "\n":
         game_version = game_version + character
 
+# Create mod_path variable and remove newline chars from options.txt
+mod_path = ""
+for character in options_txt[5]:
+    if character != "\n":
+        mod_path = mod_path + character
+
+
 # Create and specify options for webdriver
 options = Options()
 options.headless = True
@@ -47,13 +51,12 @@ if geckopath != "":
 else:
     browser =  webdriver.Firefox(options=options)
 
-print("Current working directory: {}".format(current_dir))
 print("Using minecraft version {}".format(game_version))
 
-raw_mod_list = glob(current_dir + "/*.jar")
+raw_mod_list = glob(mod_path + "*.jar")
 mod_list = []
 for item in raw_mod_list:
-    mod_list.append(sub(current_dir + "/", "", item))
+    mod_list.append(sub(mod_path, "", item))
 
 # Get mod project ID number for the Curseproxy API
 def get_project_id(mod_name):
@@ -69,25 +72,58 @@ def get_project_id(mod_name):
         pass
     return project_id
 
+total_mods_done = 0
+
 base_api_url = "https://curse.nikky.moe/api/addon/"
 
 list_number = -1
 
+recent_date = ""
+
+chdir(mod_path)
+
 for item in mod_list:
     list_number += 1
-    print("Working on file: {}".format(item))
-    mod_id = get_project_id(item)
-    print(mod_id)
+    if not (item.find("Galacticraft")):
+        print(item)
+        continue
+    print("\nWorking on file: {}\n".format(item))
+    try:
+        mod_id = get_project_id(item)
+    except UnboundLocalError:
+        continue
+    print("CurseForge Project ID: {}".format(mod_id))
     query = base_api_url + mod_id
-    api_response = get(query, timeout=3).json()
-    files_response = get(query + "/files").json()
+    raw_api_response = get(query)
+    if raw_api_response.ok == True:
+        print("The request went through successfully (Status Code: {})\n".format(raw_api_response.status_code))
+    else:
+        print("An error occured with the API request. Status code {}".format(raw_api_response.status_code))
+    while True:
+        try:
+            api_response = raw_api_response.json()
+            files_response = get(query + "/files").json()
+            break
+        except:
+            pass
     print("Mod name: {}".format(api_response["name"]))
-
     for entry in files_response:
-        api_mod_version = entry["gameVersion"]
-        print(api_mod_version)
-        print(entry["fileName"])
-
-        
+        if entry["gameVersion"][0] == "1.12.2":
+            if entry["fileDate"] > recent_date:
+                recent_date = entry["fileDate"]
+    print("Most recent file date: {}\n".format(recent_date))
+    for list_item in files_response:
+        if list_item["fileDate"] == recent_date and list_item["fileName"] != item:
+            print(list_item["downloadUrl"])
+            download(list_item["downloadUrl"])
+            print("\n")
+            remove(item)
+        elif list_item["fileName"] == item:
+            print("This mod is already the latest version.")
+            pass
+    recent_date = ""
+    total_mods_done += 1
+    print("Total mods completed: {}.".format(total_mods_done))
+    sleep(2)
 
 browser.quit()
