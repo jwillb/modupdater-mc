@@ -21,7 +21,7 @@ try:
     total_mods_done = 0
     base_api_url = "https://curse.nikky.moe/api/addon/"
     recent_date = ""
-    bad_list = ["Galacticraft", "MicdoodleCore", "Aroma1997", "CTM", "Thaumcraft"]
+    bad_list = ["Galacticraft", "MicdoodleCore", "Aroma1997", "CTM", "Thaumcraft", "aether_legacy"]
     impossible_mods = []
     mods_skipped = 0
 
@@ -74,7 +74,7 @@ try:
         browser.get(query_url)
         try:
             # Finding the project id by going to the mod's CurseForge page, after finding it on Google
-            sleep(2.5)
+            sleep(4.5)
             mod_link = browser.find_element_by_partial_link_text("curseforge.com") 
             mod_link.click()
             project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
@@ -161,9 +161,6 @@ try:
     print("Mods that were not checked: {} {}".format(mods_skipped, impossible_mods))
 except Exception as e:
     # Shows the user error messages
-    if e == "MaxRetryError":
-        print("Selenium is too tired! Just wait \na while and let Selenium cool down, or restart your computer.")
-    else:
-        print(e)
+    print(e)
     # Closes the browser
     browser.quit()
