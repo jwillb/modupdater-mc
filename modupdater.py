@@ -70,12 +70,12 @@ try:
 
     # Get mod project ID number for the Curseproxy API
     def get_project_id(mod_name):
-        query_url = "https://google.com/search?q=site:curseforge.com+" + mod_name
+        query_url = "https://duckduckgo.com/?q=site:curseforge.com+" + mod_name
         browser.get(query_url)
         try:
             # Finding the project id by going to the mod's CurseForge page, after finding it on Google
-            sleep(4)
-            mod_link = browser.find_element_by_partial_link_text("Mods - Minecraft - CurseForge") 
+            sleep(2.5)
+            mod_link = browser.find_element_by_partial_link_text("curseforge.com") 
             mod_link.click()
             project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
         except NoSuchElementException:    
@@ -88,6 +88,7 @@ try:
     chdir(mod_path)
 
     for item in mod_list:
+        no_version = False
         # Checking if mod matches any known problematic mod names
         skip = False
         for word in bad_list:
@@ -96,6 +97,7 @@ try:
         if skip:
             impossible_mods.append(item)
             mods_skipped += 1
+            print("Skipping current mod.")
             continue
         
         # Shows user info about the file and its project id from CurseForge, if applicable
@@ -132,10 +134,10 @@ try:
         print("Mod name: {}".format(api_response["name"]))
         # Finds the most recent file for the specified game version
         for entry in files_response:
-            if entry["gameVersion"][0] == "1.12.2":
+            if entry["gameVersion"][0] == game_version:
                 if entry["fileDate"] > recent_date:
                     recent_date = entry["fileDate"]
-        
+
         # Shows user the last uploaded file date
         print("Most recent file date: {}\n".format(recent_date))
         
@@ -147,13 +149,16 @@ try:
                 print("\n")
                 remove(item)
             elif list_item["fileName"] == item:
-                print("This mod is already the latest version.")
+                print("This mod is the latest version or there was \nno mod to be found in the specified version.")
                 pass
         recent_date = ""
         # Shows the user the total amount of mods completed and skipped
         total_mods_done += 1
         print("Total mods completed: {}.".format(total_mods_done))
-    print("Mods that were not checked: {}".format(impossible_mods))
+    # Shows the user the mods that could not be checked or downloaded
+    if impossible_mods == []:
+        impossible_mods = "None"
+    print("Mods that were not checked: {} {}".format(mods_skipped, impossible_mods))
 except Exception as e:
     # Shows the user error messages
     if e == "MaxRetryError":
@@ -162,4 +167,3 @@ except Exception as e:
         print(e)
     # Closes the browser
     browser.quit()
-browser.quit()
