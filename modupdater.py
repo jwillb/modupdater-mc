@@ -14,7 +14,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
+# Create necessary variables
 script_dir = path.dirname(path.realpath(__file__))
+
+total_mods_done = 0
+
+base_api_url = "https://curse.nikky.moe/api/addon/"
+
+list_number = -1
+
+recent_date = ""
 
 # Create and populate the options_txt variable with the options.txt file
 options_txt = []
@@ -51,8 +60,10 @@ if geckopath != "":
 else:
     browser =  webdriver.Firefox(options=options)
 
+# Display status message that shows when you start the appilication
 print("Using minecraft version {}".format(game_version))
 
+# Creates raw_mod_list and mod_list variables
 raw_mod_list = glob(mod_path + "*.jar")
 mod_list = []
 for item in raw_mod_list:
@@ -63,6 +74,7 @@ def get_project_id(mod_name):
     query_url = "https://google.com/search?q=site:curseforge.com+" + mod_name
     browser.get(query_url)
     try:
+        sleep(3)
         mod_link = browser.find_element_by_partial_link_text("Mods - Minecraft - CurseForge") 
         mod_link.click()
         project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
@@ -72,13 +84,7 @@ def get_project_id(mod_name):
         pass
     return project_id
 
-total_mods_done = 0
 
-base_api_url = "https://curse.nikky.moe/api/addon/"
-
-list_number = -1
-
-recent_date = ""
 
 chdir(mod_path)
 
