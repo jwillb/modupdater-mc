@@ -12,6 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+
 # Create necessary variables
 script_dir = path.dirname(path.realpath(__file__))
 total_mods_done = 0
@@ -20,21 +21,25 @@ recent_date = ""
 bad_list = ["OptiFine", "Galacticraft", "MicdoodleCore", "Aroma1997", "CTM", "Thaumcraft", "aether_legacy"]
 impossible_mods = []
 mods_skipped = 0
+
 # Create and populate the options_txt variable with the options.txt file
 options_txt = []
 with open(script_dir + "/options.txt") as source:
     for line in source:
         options_txt.append(line)
+
 # Create geckopath variable and remove newline chars from options.txt
 geckopath = r""
 for character in options_txt[3]:
     if character != "\n":
         geckopath = geckopath + character
+
 # Create version variable and remove newline chars from options.txt
 game_version = ""
 for character in options_txt[1]:
     if character != "\n":
         game_version = game_version + character
+
 # Create mod_path variable and remove newline chars from options.txt
 mod_path = ""
 for character in options_txt[5]:
@@ -64,12 +69,14 @@ def get_project_id(mod_name):
     query_url = "https://duckduckgo.com/?q=site:curseforge.com+" + mod_name
     browser.get(query_url)
     try:
+        
         # Finding the project id by going to the mod's CurseForge page, after finding it on Google
         sleep(4.5)
         mod_link = browser.find_element_by_partial_link_text("curseforge.com") 
         mod_link.click()
         project_id = browser.find_element_by_css_selector("div.mb-3:nth-child(2) > div:nth-child(1) > span:nth-child(2)").text
     except NoSuchElementException:    
+        
         # What to do if the mod was unable to find the link or find the project id
         print("Element was not found. This could mean that Selenium is broken, or \nthat the mod is not on Curseforge.")
         pass
@@ -78,6 +85,7 @@ def get_project_id(mod_name):
 chdir(mod_path)
 for item in mod_list:
     no_version = False
+    
     # Checking if mod matches any known problematic mod names
     skip = False
     for word in bad_list:
@@ -121,6 +129,7 @@ for item in mod_list:
     
     # Shows the user the mod name and other useful info
     print("Mod name: {}".format(api_response["name"]))
+    
     # Finds the most recent file for the specified game version
     for entry in files_response:
         try:    
@@ -128,9 +137,11 @@ for item in mod_list:
                 if entry["fileDate"] > recent_date:
                     recent_date = entry["fileDate"]
         except IndexError:
-            print("Mod {} has an API Error, skipping.".format(api_response["name"]))
-            impossible_mods.append(item)
-            mods_skipped += 1
+            if not item in impossible_mods:
+                print("Mod {} has an API Error, skipping.".format(api_response["name"]))
+                impossible_mods.append(item)
+                mods_skipped += 1
+    
     # Shows user the last uploaded file date
     print("Most recent file date: {}\n".format(recent_date))
     
@@ -154,6 +165,8 @@ for item in mod_list:
 if impossible_mods == []:
     impossible_mods = "None"
 
+# Shows the user the mods that were not checked
 print("Mods that were not checked: {} {}".format(mods_skipped, impossible_mods))
 
+# Closes the Gecko webdriver
 browser.quit()
