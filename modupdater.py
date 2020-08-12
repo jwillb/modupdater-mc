@@ -86,7 +86,7 @@ for item in mod_list:
     if skip:
         impossible_mods.append(item)
         mods_skipped += 1
-        print("Skipping current mod.")
+        print("\nSkipping current mod. ({})".format(item))
         continue
     
     # Shows user info about the file and its project id from CurseForge, if applicable
@@ -128,7 +128,7 @@ for item in mod_list:
                 if entry["fileDate"] > recent_date:
                     recent_date = entry["fileDate"]
         except IndexError:
-            print("Mod {} has an API Error and should be added to the blocklist for the time being.".format(api_response["name"]))
+            print("Mod {} has an API Error, skipping.".format(api_response["name"]))
     # Shows user the last uploaded file date
     print("Most recent file date: {}\n".format(recent_date))
     
@@ -143,9 +143,11 @@ for item in mod_list:
             print("This mod is the latest version or there was \nno mod to be found in the specified version.")
             pass
     recent_date = ""
+    
     # Shows the user the total amount of mods completed and skipped
     total_mods_done += 1
     print("Total mods completed: {}.".format(total_mods_done))
+
 # Shows the user the mods that could not be checked or downloaded
 if impossible_mods == []:
     impossible_mods = "None"
