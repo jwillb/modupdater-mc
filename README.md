@@ -14,5 +14,7 @@ This does not currently and will not ever work with mods from sites that aren't 
 Known mods that do not work either because of them not being on Curseforge or some other API error: Aether Legacy (API Error), Aroma1997Core (API Error), Aroma1997 Dimensional Worlds (API Error), ConnectedTexturesMod (API Error), Galacticraft and MicdooldleCore (Not on Curseforge).  
 These mods will simply be ignored in the event that they are present in your mods folder.
 
-#### Help! I keep trying to update my mods, but I keep getting the HTTPConnectionPool/MaxRetryError message!  
-I am currently working on fixing this, so hang tight.
+~~#### Help! I keep trying to update my mods, but I keep getting the HTTPConnectionPool/MaxRetryError message!  
+I am currently working on fixing this, so hang tight.~~  
+
+I fixed this problem in the most recent patch.
