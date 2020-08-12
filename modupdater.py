@@ -129,6 +129,8 @@ for item in mod_list:
                     recent_date = entry["fileDate"]
         except IndexError:
             print("Mod {} has an API Error, skipping.".format(api_response["name"]))
+            impossible_mods.append(item)
+            mods_skipped += 1
     # Shows user the last uploaded file date
     print("Most recent file date: {}\n".format(recent_date))
     
