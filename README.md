@@ -1,6 +1,6 @@
 # modupdater-mc
 
-A tool for updating manually-downloaded Minecraft mods from curseforge to their latest versions, using [Selenium](https://selenium.dev) and [CurseProxy](https://github.com/NikkyAI/CurseProxy). It is currently in a very unstable state, and I cannot recommend that anybody use this program without first creating a backup of their mods folder.
+A tool for updating manually-downloaded Minecraft mods from curseforge to their latest versions, using [Selenium](https://selenium.dev) and [CurseProxy](https://github.com/NikkyAI/CurseProxy). It is currently in a beta state, and I cannot recommend that anybody use this program without first creating a backup of their mods folder. Because of the amount of mods that are not on Curseforge, and the amount of mods that have peculiarities in the API, this is not guaranteed to and probably won't update all of your mods, but it will do a lot of the work for you. After the mods are updated, it will display a list of skipped mods, that you can then download manually.  
 
 ## Prerequisites
 - Minecraft installed with mods (Obviously)
