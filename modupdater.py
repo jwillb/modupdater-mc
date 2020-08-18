@@ -18,7 +18,7 @@ script_dir = path.dirname(path.realpath(__file__))
 total_mods_done = 0
 base_api_url = "https://curse.nikky.moe/api/addon/"
 recent_date = ""
-bad_list = ["OptiFine", "Galacticraft", "MicdoodleCore", "Aroma1997", "CTM", "Thaumcraft", "aether_legacy"]
+bad_list = ["OptiFine", "Galacticraft", "MicdoodleCore", "CTM", "Thaumcraft", "aether_legacy", "Betweenlands", "PortalGun"]
 impossible_mods = []
 mods_skipped = 0
 
